@@ -8,9 +8,11 @@ using System.Threading.Tasks;
 namespace AsyncServer
 {
     class Server
-    {   
+    {
         // maximum threads in thread pool 
-        private const int NUMBER_OF_THREADS = 4;
+        private const int NUMBER_OF_THREADS = 200;
+        private static SemaphoreSlim S = new SemaphoreSlim(NUMBER_OF_THREADS, NUMBER_OF_THREADS);
+
         private const int PORT = 11111;
         private const int BUFFER_SIZE = 5000;
         static async void RunServerAsync()
@@ -40,6 +42,7 @@ namespace AsyncServer
                 using (client)
                 using (NetworkStream n = client.GetStream())
                 {
+                    await S.WaitAsync();
                     byte[] data = new byte[5000];
                     await n.ReadAsync(data, 0, data.Length);
                       
@@ -52,11 +55,14 @@ namespace AsyncServer
                 }
             }
             catch (Exception ex) { Console.WriteLine(ex.Message); }
+            finally
+            {
+                S.Release();
+            }
         }
-
+        
         static void Main(string[] args)
         {
-            ThreadPool.SetMaxThreads(NUMBER_OF_THREADS, NUMBER_OF_THREADS);
             RunServerAsync();
             Console.ReadKey();
         }
