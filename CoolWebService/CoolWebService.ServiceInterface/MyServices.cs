@@ -1,17 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using ServiceStack;
+﻿using ServiceStack;
 using CoolWebService.ServiceModel;
+using System.Threading.Tasks;
+using System;
 
 namespace CoolWebService.ServiceInterface
 {
     public class MyServices : Service
     {
-        public object Any(Hello request)
+        //private static readonly int NUMBER_OF_THREADS = 200;
+        //private static SemaphoreSlim S = new SemaphoreSlim(NUMBER_OF_THREADS, NUMBER_OF_THREADS);
+
+        public async Task<object> Post(Hello request)
         {
-            return new HelloResponse { Result = "Hello, {0}!".Fmt(request.Name) };
+
+            await Task.Delay(TimeSpan.FromSeconds(15));
+
+            return new HelloResponse { Result = $"Hello, {request.Name}!"};
         }
     }
 }

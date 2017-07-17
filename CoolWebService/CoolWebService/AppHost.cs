@@ -22,6 +22,11 @@ namespace CoolWebService
             //Config examples
             //this.Plugins.Add(new PostmanFeature());
             //this.Plugins.Add(new CorsFeature());
+            SetConfig(new HostConfig
+            {
+                DefaultContentType = MimeTypes.Json,
+                EnableFeatures = Feature.All.Remove(Feature.Html),
+            });
         }
     }
 }
